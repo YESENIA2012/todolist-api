@@ -1,21 +1,10 @@
-const sequelize = require("./models");
-const express = require("express");
+import connectToBD from "./models/index.js";
+import express from "express";
 const app = express();
-const PORT = 3000;
+const PORT = 4000;
 
 // Sincronizar los modelos con la base de datos
-
-sequelize
-  .sync()
-  .then(() => {
-    console.log("Modelos sincronizados correctamente con la base de datos");
-  })
-  .catch((error) => {
-    console.error(
-      "No se pudo sincronizar los modelos con la base de datos:",
-      error
-    );
-  });
+await connectToBD();
 
 // Configuración de middleware para el manejo de datos en formato JSON
 app.use(express.json());
