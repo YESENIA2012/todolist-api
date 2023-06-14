@@ -26,4 +26,6 @@ const Task = sequelize.define(
   }
 );
 
+console.log("esta entrando a el modelo");
+
 export default Task;

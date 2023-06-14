@@ -7,17 +7,54 @@ class TasksController {
     return parseTask;
   }
 
-  async newTask({ title, description, state }) {
+  async deleteTask(taskId, res) {
+    try {
+      const taskToDelete = await Task.findOne({ where: { id: taskId } });
+
+      if (!taskToDelete) {
+        return res.status(404).json({ error: "Task not found" });
+      }
+
+      Task.destroy({ where: { id: taskId } });
+      res.sendStatus(204);
+    } catch (error) {
+      console.log("error", error);
+    }
+  }
+
+  async newTask({ title, description, state }, res) {
     try {
       const task = await Task.create({
         title,
         description,
         state,
       });
-      return task;
+      res.status(201).json(task);
+      console.log("Task create:", task);
     } catch (error) {
       console.log(error);
       throw error;
+    }
+  }
+
+  async updateTask({ title, description, state }, taskId, res) {
+    try {
+      const taskUpdate = await Task.findOne({ where: { id: taskId } });
+      if (!taskUpdate) {
+        return res.status(404).json({ error: "Task not found" });
+      }
+      Task.update(
+        {
+          title: title || Task.title,
+          description: description || Task.description,
+          state: state || Task.state,
+        },
+        { where: { id: taskId } }
+      );
+
+      res.json(taskUpdate);
+    } catch (error) {
+      console.log("error", error);
     }
   }
 }
