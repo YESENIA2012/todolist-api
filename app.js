@@ -1,6 +1,9 @@
-import { Task } from "./models/index.js";
+/* import { Task } from "./src/models/index.js"; */
+import "./dotenv.js";
+import router from "./src/routes/tasks.js";
 import express from "express";
 import cors from "cors";
+
 const app = express();
 const PORT = 4000;
 
@@ -8,8 +11,9 @@ const PORT = 4000;
 app.use(cors());
 app.use(express.text());
 app.use(express.json());
+app.use(router);
 
-const validateCreateTaskParams = (title, description, state) => {
+/* const validateCreateTaskParams = (title, description, state) => {
   let errorFound = false;
   let invalidProperty = null;
 
@@ -104,7 +108,7 @@ app.put("/tasks/:id", async (req, res) => {
   );
 
   res.json(Task);
-});
+}); */
 
 // Iniciar el servidor
 app.listen(PORT, () => {
