@@ -7,16 +7,12 @@ class TasksController {
     return parseTask;
   }
 
-  async deleteTask(taskId, res) {
+  async deleteTask(taskId) {
     try {
       const taskToDelete = await Task.findOne({ where: { id: taskId } });
-
-      if (!taskToDelete) {
-        return res.status(404).json({ error: "Task not found" });
-      }
-
       Task.destroy({ where: { id: taskId } });
-      res.sendStatus(204);
+
+      return taskToDelete;
     } catch (error) {
       console.log("error", error);
     }
@@ -29,7 +25,7 @@ class TasksController {
         description,
         state,
       });
-      console.log("Task create:", task);
+
       return task;
     } catch (error) {
       console.log(error);
@@ -37,12 +33,10 @@ class TasksController {
     }
   }
 
-  async updateTask({ title, description, state }, taskId, res) {
+  async updateTask({ title, description, state }, taskId) {
     try {
       const taskUpdate = await Task.findOne({ where: { id: taskId } });
-      if (!taskUpdate) {
-        return res.status(404).json({ error: "Task not found" });
-      }
+
       Task.update(
         {
           title: title || Task.title,
@@ -52,7 +46,7 @@ class TasksController {
         { where: { id: taskId } }
       );
 
-      res.json(taskUpdate);
+      return taskUpdate;
     } catch (error) {
       console.log("error", error);
     }
