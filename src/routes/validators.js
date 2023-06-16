@@ -1,32 +1,22 @@
-const validateCreateTaskParams = (title, description, state) => {
-  let errorFound = false;
-  let invalidProperty = null;
+import Joi from "joi";
 
-  if (!title) {
-    errorFound = true;
-    invalidProperty = "title";
-  } else if (!description) {
-    errorFound = true;
-    invalidProperty = "description";
-  } else if (!state) {
-    errorFound = true;
-    invalidProperty = "state";
-  }
-
-  return {
-    errorFound,
-    invalidProperty,
-  };
-};
+const createTaskSchema = Joi.object({
+  title: Joi.string().required().label("Title"),
+  description: Joi.string().required().label("Description"),
+  state: Joi.string().required().label("State"),
+});
 
 const validateData = (req, res, next) => {
-  const { title, description, state } = req.body;
-  const validateParams = validateCreateTaskParams(title, description, state);
-  if (!validateParams.errorFound) {
+  const { error } = createTaskSchema.validate(req.body, { abortEarly: false });
+
+  if (!error) {
     next();
   } else {
+    const errorMessage = error.details
+      .map((detail) => detail.message)
+      .join(", ");
     res.status(400).json({
-      error: `The ${validateParams.invalidProperty} is required to create the task`,
+      error: errorMessage,
     });
   }
 };
