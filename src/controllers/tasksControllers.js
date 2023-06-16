@@ -22,15 +22,15 @@ class TasksController {
     }
   }
 
-  async newTask({ title, description, state }, res) {
+  async newTask({ title, description, state }) {
     try {
       const task = await Task.create({
         title,
         description,
         state,
       });
-      res.status(201).json(task);
       console.log("Task create:", task);
+      return task;
     } catch (error) {
       console.log(error);
       throw error;

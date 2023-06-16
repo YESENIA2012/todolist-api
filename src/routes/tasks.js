@@ -24,20 +24,17 @@ router.delete("/tasks/:id", async (req, res) => {
   }
 });
 
-validateData(router);
-
-router.post("/tasks", async (req, res) => {
+router.post("/tasks", validateData, async (req, res) => {
+  // el va a saber que el segundo parametro es un middlware
   const { title, description, state } = req.body;
 
   try {
-    await tasksController.newTask(
-      {
-        title,
-        description,
-        state,
-      },
-      res
-    );
+    const newTask = await tasksController.newTask({
+      title,
+      description,
+      state,
+    });
+    res.status(201).json(newTask);
   } catch (error) {
     res.status(500).json({ error: "error creating task" });
   }
