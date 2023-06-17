@@ -5,32 +5,28 @@ import { validateData } from "./validators.js";
 const router = Router();
 const tasksController = new TasksController();
 
-router.get("/tasks", async (_, res) => {
+router.get("/tasks", async (_, res, next) => {
   try {
     const tasks = await tasksController.getTasks();
     res.status(200).json(tasks);
   } catch (error) {
-    res.status(500).json({ error: "Error retrieving tasks" });
+    next(error);
   }
 });
 
-router.delete("/tasks/:id", async (req, res) => {
+router.delete("/tasks/:id", async (req, res, next) => {
   const taskId = parseInt(req.params.id);
 
   try {
     const taskToDelete = await tasksController.deleteTask(taskId);
 
-    if (!taskToDelete) {
-      return res.status(404).json({ error: "Task not found" });
-    }
-
     res.sendStatus(204);
   } catch (error) {
-    res.status(500).json({ error: "Error deleting tasks" });
+    next(error);
   }
 });
 
-router.post("/tasks", validateData, async (req, res) => {
+router.post("/tasks", validateData, async (req, res, next) => {
   // el va a saber que el segundo parametro es un middlware
   const { title, description, state } = req.body;
 
@@ -42,11 +38,11 @@ router.post("/tasks", validateData, async (req, res) => {
     });
     res.status(201).json(newTask);
   } catch (error) {
-    res.status(500).json({ error: "error creating task" });
+    next(error);
   }
 });
 
-router.put("/tasks/:id", async (req, res) => {
+router.put("/tasks/:id", validateData, async (req, res, next) => {
   const taskId = parseInt(req.params.id);
   const { title, description, state } = req.body;
 
@@ -63,7 +59,7 @@ router.put("/tasks/:id", async (req, res) => {
 
     res.json(taskUpdate);
   } catch (error) {
-    res.status(500).json({ error: "error updating task" });
+    next(error);
   }
 });
 

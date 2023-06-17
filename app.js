@@ -12,6 +12,16 @@ app.use(express.text());
 app.use(express.json());
 app.use(router);
 
+app.use((err, req, res, next) => {
+  if (err?.original) {
+    console.log("error middleware ", err.original);
+  } else {
+    console.log("error middleware ", err);
+  }
+  res.status(500).json({ error: "Internal Server Error" });
+  next();
+});
+
 // Iniciar el servidor
 app.listen(PORT, () => {
   console.log(`Server running at port ${PORT}`);
